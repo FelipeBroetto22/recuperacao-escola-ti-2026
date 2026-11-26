@@ -1,0 +1,8 @@
+{
+  "slug": "recuperacao-escola-ti-2026",
+  "EXAM_DIR": "exams/2026/track-05-recuperacao-individual",
+  "PORTA_API": 8109,
+  "LIMITE_PAGINACAO": 10,
+  "HORAS_LIMITE_ATIVIDADE": 8,
+  "TENTATIVAS_WEBHOOK": 3
+}
