@@ -16,7 +16,10 @@
 
 | # | URL | O que foi consultado | Onde aparece no entregável |
 | --- | --- | --- | --- |
-| — | | | |
+| 1 | https://github.com/github/spec-kit | Estrutura de artefatos SDD (constitution, spec, plan e tasks) | `docs/tasks.md` e `docs/pesquisa.md` (P01) |
+| 2 | https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html | Comparação de níveis de uso de especificação viva no projeto | `docs/pesquisa.md` (P01) |
+| 3 | https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow | Funcionamento de feature branches vs fluxos com develop | `docs/pesquisa.md` (P12) |
+| 4 | https://docs.github.com/en/get-started/using-github/github-flow | Uso de branches curtas e PRs direto na main | `docs/pesquisa.md` (P12) e fluxo de PRs |
 
 *(Ex.: `https://docs.oracle.com/...` → sintaxe de `Optional` → `plan.md` na
 seção de decisões. Esse link é ILUSTRATIVO — fora de linha numerada não
@@ -48,7 +51,7 @@ Declaro que todo o conteúdo deste repositório que não é de minha autoria dir
 está declarado acima, e que consigo explicar qualquer trecho entregue — tenha
 ele vindo da minha cabeça, de um site ou de uma IA consultada.
 
-**Nome / RA:**
+**Nome / RA:** Felipe Broetto Araujo — 23167564-2
 
 [^transparencia]: Este arquivo é, ele mesmo, um exemplo de markdown bem
     usado: *alert* para a regra crítica, tabelas para os registros e *footnote*
