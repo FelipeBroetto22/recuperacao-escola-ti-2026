@@ -2,9 +2,9 @@
 
 # ALUNO
 
-Nome: Felipe
+Nome: Felipe Broetto Araujo
 
-RA: >>> PREENCHER <<<
+RA: 23167564-2
 
 Conta GitHub: @FelipeBroetto22
 
