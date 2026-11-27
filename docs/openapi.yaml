@@ -1,0 +1,696 @@
+openapi: 3.1.0
+info:
+  title: Conecta Comunidade API
+  version: 1.0.0
+  description: Contrato HTTP da plataforma Conecta Comunidade (parceiros, projetos, atividades e webhook).
+servers:
+  - url: http://localhost:8109
+    description: Porta externa da variante na correção
+  - url: http://localhost:8080
+    description: Porta interna no container
+
+paths:
+  /saude:
+    get:
+      summary: Verifica saúde da aplicação (RF-01)
+      responses:
+        "200":
+          description: Aplicação saudável
+          headers:
+            X-Correlation-ID:
+              $ref: "#/components/headers/XCorrelationId"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, versao]
+                properties:
+                  status: { type: string, const: ok }
+                  versao: { type: string, example: "1.0.0" }
+
+  /parceiros:
+    post:
+      summary: Cadastra parceiro consultando CEP (RF-02)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParceiroEntrada"
+      responses:
+        "201":
+          $ref: "#/components/responses/ParceiroCriado"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+        "503":
+          $ref: "#/components/responses/ErroProblema"
+    get:
+      summary: Lista parceiros com filtros e paginação (RF-02)
+      parameters:
+        - $ref: "#/components/parameters/Pagina"
+        - $ref: "#/components/parameters/Tamanho"
+        - name: nome
+          in: query
+          schema: { type: string }
+        - name: ativo
+          in: query
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: Lista paginada de parceiros
+          headers:
+            X-Correlation-ID:
+              $ref: "#/components/headers/XCorrelationId"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [dados, paginacao]
+                properties:
+                  dados:
+                    type: array
+                    items: { $ref: "#/components/schemas/Parceiro" }
+                  paginacao:
+                    $ref: "#/components/schemas/Paginacao"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+
+  /parceiros/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    get:
+      summary: Detalha parceiro por ID (RF-02)
+      responses:
+        "200":
+          $ref: "#/components/responses/ParceiroOk"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+    put:
+      summary: Atualiza dados cadastrais do parceiro (RF-03)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParceiroPut"
+      responses:
+        "200":
+          $ref: "#/components/responses/ParceiroOk"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+        "503":
+          $ref: "#/components/responses/ErroProblema"
+    patch:
+      summary: Ativa ou desativa parceiro (RF-03)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [ativo]
+              properties:
+                ativo: { type: boolean }
+      responses:
+        "200":
+          $ref: "#/components/responses/ParceiroOk"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+    delete:
+      summary: Remove parceiro sem projetos vinculados (RF-03)
+      responses:
+        "204":
+          $ref: "#/components/responses/SemConteudo"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+
+  /projetos:
+    post:
+      summary: Cria projeto em rascunho (RF-04)
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjetoEntrada"
+      responses:
+        "201":
+          $ref: "#/components/responses/ProjetoCriado"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+    get:
+      summary: Lista projetos com filtros e paginação (RF-04)
+      parameters:
+        - $ref: "#/components/parameters/Pagina"
+        - $ref: "#/components/parameters/Tamanho"
+        - name: status
+          in: query
+          schema: { type: string, enum: [rascunho, ativo, encerrado] }
+        - name: parceiro_id
+          in: query
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200":
+          description: Lista paginada de projetos
+          headers:
+            X-Correlation-ID:
+              $ref: "#/components/headers/XCorrelationId"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [dados, paginacao]
+                properties:
+                  dados:
+                    type: array
+                    items: { $ref: "#/components/schemas/Projeto" }
+                  paginacao:
+                    $ref: "#/components/schemas/Paginacao"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+
+  /projetos/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    get:
+      summary: Detalha projeto por ID (RF-04)
+      responses:
+        "200":
+          $ref: "#/components/responses/ProjetoOk"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+    put:
+      summary: Edita projeto em rascunho (RF-05)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjetoEntrada"
+      responses:
+        "200":
+          $ref: "#/components/responses/ProjetoOk"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+    delete:
+      summary: Exclui projeto em rascunho sem atividades (RF-05)
+      responses:
+        "204":
+          $ref: "#/components/responses/SemConteudo"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+
+  /projetos/{id}/status:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    patch:
+      summary: Altera status do projeto (RF-05)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [status]
+              properties:
+                status: { type: string, enum: [rascunho, ativo, encerrado] }
+      responses:
+        "200":
+          $ref: "#/components/responses/ProjetoOk"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+
+  /projetos/{id}/relatorio:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    get:
+      summary: Consolida atividades e horas do projeto (RF-08)
+      responses:
+        "200":
+          description: Relatório consolidado
+          headers:
+            X-Correlation-ID:
+              $ref: "#/components/headers/XCorrelationId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RelatorioProjeto"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+
+  /projetos/{id}/publicacao:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+      - $ref: "#/components/parameters/IdempotencyKey"
+    post:
+      summary: Enfileira evento de publicação na outbox (RF-09)
+      responses:
+        "202":
+          description: Evento enfileirado para entrega
+          headers:
+            X-Correlation-ID:
+              $ref: "#/components/headers/XCorrelationId"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [evento_id, projeto_id, status]
+                properties:
+                  evento_id: { type: string }
+                  projeto_id: { type: integer }
+                  status: { type: string, enum: [pendente, enviado, falhou] }
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+        "503":
+          $ref: "#/components/responses/ErroProblema"
+
+  /projetos/{id}/atividades:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+      - $ref: "#/components/parameters/IdempotencyKey"
+    post:
+      summary: Cria atividade planejada no projeto (RF-06)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtividadeEntrada"
+      responses:
+        "201":
+          $ref: "#/components/responses/AtividadeCriada"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+
+  /atividades:
+    get:
+      summary: Lista atividades com filtro de período e paginação (RF-06)
+      parameters:
+        - $ref: "#/components/parameters/Pagina"
+        - $ref: "#/components/parameters/Tamanho"
+        - name: projeto_id
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - name: status
+          in: query
+          schema: { type: string, enum: [planejada, concluida, cancelada] }
+        - name: de
+          in: query
+          schema: { type: string, format: date-time }
+        - name: ate
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: Lista paginada de atividades
+          headers:
+            X-Correlation-ID:
+              $ref: "#/components/headers/XCorrelationId"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [dados, paginacao]
+                properties:
+                  dados:
+                    type: array
+                    items: { $ref: "#/components/schemas/Atividade" }
+                  paginacao:
+                    $ref: "#/components/schemas/Paginacao"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+
+  /atividades/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    get:
+      summary: Detalha atividade por ID (RF-06)
+      responses:
+        "200":
+          $ref: "#/components/responses/AtividadeOk"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+    put:
+      summary: Edita atividade planejada (RF-07)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtividadeEntrada"
+      responses:
+        "200":
+          $ref: "#/components/responses/AtividadeOk"
+        "400":
+          $ref: "#/components/responses/ErroProblema"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+    delete:
+      summary: Exclui atividade planejada (RF-07)
+      responses:
+        "204":
+          $ref: "#/components/responses/SemConteudo"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+
+  /atividades/{id}/status:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    patch:
+      summary: Conclui ou cancela atividade (RF-07)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  additionalProperties: false
+                  required: [status, horas_realizadas_centesimos]
+                  properties:
+                    status: { type: string, const: concluida }
+                    horas_realizadas_centesimos:
+                      type: integer
+                      minimum: 25
+                      maximum: 800
+                      multipleOf: 25
+                - type: object
+                  additionalProperties: false
+                  required: [status]
+                  properties:
+                    status: { type: string, const: cancelada }
+      responses:
+        "200":
+          $ref: "#/components/responses/AtividadeOk"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+        "409":
+          $ref: "#/components/responses/ErroProblema"
+        "422":
+          $ref: "#/components/responses/ErroProblema"
+
+  /integracoes/eventos/{evento_id}:
+    get:
+      summary: Consulta estado de entrega do evento de webhook (RF-10)
+      parameters:
+        - name: evento_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Estado atual do evento
+          headers:
+            X-Correlation-ID:
+              $ref: "#/components/headers/XCorrelationId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventoIntegracao"
+        "404":
+          $ref: "#/components/responses/ErroProblema"
+
+components:
+  headers:
+    XCorrelationId:
+      description: Identificador de correlação da requisição
+      schema: { type: string }
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1 }
+    Pagina:
+      name: pagina
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    Tamanho:
+      name: tamanho
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 50, default: 10 }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, minLength: 8, maxLength: 100 }
+
+  responses:
+    SemConteudo:
+      description: Operação concluída sem corpo
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+    ParceiroCriado:
+      description: Parceiro criado
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Parceiro" }
+    ParceiroOk:
+      description: Dados do parceiro
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Parceiro" }
+    ProjetoCriado:
+      description: Projeto criado
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Projeto" }
+    ProjetoOk:
+      description: Dados do projeto
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Projeto" }
+    AtividadeCriada:
+      description: Atividade criada
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Atividade" }
+    AtividadeOk:
+      description: Dados da atividade
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Atividade" }
+    ErroProblema:
+      description: Resposta padronizada Problem Details (RFC 9457)
+      headers:
+        X-Correlation-ID:
+          $ref: "#/components/headers/XCorrelationId"
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/ProblemDetails" }
+
+  schemas:
+    Paginacao:
+      type: object
+      required: [pagina, tamanho, total, total_paginas]
+      properties:
+        pagina: { type: integer }
+        tamanho: { type: integer }
+        total: { type: integer }
+        total_paginas: { type: integer }
+
+    ProblemDetails:
+      type: object
+      required: [type, title, status, detail, instance, code, correlation_id]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string }
+        code: { type: string }
+        correlation_id: { type: string }
+        errors:
+          type: array
+          items:
+            type: object
+            required: [field, message]
+            properties:
+              field: { type: string }
+              message: { type: string }
+
+    ParceiroEntrada:
+      type: object
+      additionalProperties: false
+      required: [nome, email, cep]
+      properties:
+        nome: { type: string, minLength: 3, maxLength: 100 }
+        email: { type: string, format: email }
+        cep: { type: string, pattern: "^[0-9]{8}$" }
+        complemento: { type: ["string", "null"], maxLength: 120 }
+
+    ParceiroPut:
+      type: object
+      additionalProperties: false
+      required: [nome, email, cep, complemento]
+      properties:
+        nome: { type: string, minLength: 3, maxLength: 100 }
+        email: { type: string, format: email }
+        cep: { type: string, pattern: "^[0-9]{8}$" }
+        complemento: { type: ["string", "null"], maxLength: 120 }
+
+    Parceiro:
+      type: object
+      required: [id, nome, email, cep, logradouro, bairro, cidade, uf, complemento, ativo, criado_em, atualizado_em]
+      properties:
+        id: { type: integer }
+        nome: { type: string }
+        email: { type: string }
+        cep: { type: string }
+        logradouro: { type: string }
+        bairro: { type: string }
+        cidade: { type: string }
+        uf: { type: string }
+        complemento: { type: ["string", "null"] }
+        ativo: { type: boolean }
+        criado_em: { type: string, format: date-time }
+        atualizado_em: { type: string, format: date-time }
+
+    ProjetoEntrada:
+      type: object
+      additionalProperties: false
+      required: [titulo, descricao, parceiro_id, horas_previstas_centesimos]
+      properties:
+        titulo: { type: string, minLength: 3, maxLength: 120 }
+        descricao: { type: string, minLength: 10, maxLength: 2000 }
+        parceiro_id: { type: integer, minimum: 1 }
+        horas_previstas_centesimos: { type: integer, minimum: 100, maximum: 1000000 }
+
+    Projeto:
+      type: object
+      required: [id, titulo, descricao, parceiro_id, horas_previstas_centesimos, status, criado_em, atualizado_em]
+      properties:
+        id: { type: integer }
+        titulo: { type: string }
+        descricao: { type: string }
+        parceiro_id: { type: integer }
+        horas_previstas_centesimos: { type: integer }
+        status: { type: string, enum: [rascunho, ativo, encerrado] }
+        criado_em: { type: string, format: date-time }
+        atualizado_em: { type: string, format: date-time }
+
+    AtividadeEntrada:
+      type: object
+      additionalProperties: false
+      required: [titulo, inicio, voluntario, horas_previstas_centesimos]
+      properties:
+        titulo: { type: string, minLength: 3, maxLength: 120 }
+        inicio: { type: string, format: date-time }
+        voluntario: { type: string, minLength: 3, maxLength: 100 }
+        horas_previstas_centesimos: { type: integer, minimum: 25, maximum: 800, multipleOf: 25 }
+
+    Atividade:
+      type: object
+      required: [id, projeto_id, titulo, inicio, voluntario, horas_previstas_centesimos, horas_realizadas_centesimos, status, criado_em, atualizado_em]
+      properties:
+        id: { type: integer }
+        projeto_id: { type: integer }
+        titulo: { type: string }
+        inicio: { type: string, format: date-time }
+        voluntario: { type: string }
+        horas_previstas_centesimos: { type: integer }
+        horas_realizadas_centesimos: { type: ["integer", "null"] }
+        status: { type: string, enum: [planejada, concluida, cancelada] }
+        criado_em: { type: string, format: date-time }
+        atualizado_em: { type: string, format: date-time }
+
+    RelatorioProjeto:
+      type: object
+      required: [projeto_id, status, atividades_planejadas, atividades_concluidas, atividades_canceladas, horas_previstas_centesimos, horas_realizadas_centesimos, percentual_conclusao]
+      properties:
+        projeto_id: { type: integer }
+        status: { type: string }
+        atividades_planejadas: { type: integer }
+        atividades_concluidas: { type: integer }
+        atividades_canceladas: { type: integer }
+        horas_previstas_centesimos: { type: integer }
+        horas_realizadas_centesimos: { type: integer }
+        percentual_conclusao: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+
+    EventoIntegracao:
+      type: object
+      required: [id, projeto_id, tipo, status, tentativas, criado_em, atualizado_em, proxima_tentativa_em]
+      properties:
+        id: { type: string }
+        projeto_id: { type: integer }
+        tipo: { type: string }
+        status: { type: string, enum: [pendente, enviado, falhou] }
+        tentativas: { type: integer }
+        ultimo_erro: { type: ["string", "null"] }
+        proxima_tentativa_em: { type: ["string", "null"], format: date-time }
+        criado_em: { type: string, format: date-time }
+        atualizado_em: { type: string, format: date-time }

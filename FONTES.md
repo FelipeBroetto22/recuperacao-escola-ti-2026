@@ -35,6 +35,10 @@
 | 17 | https://fastapi.tiangolo.com/pt/tutorial/handling-errors/ | Documentação em português do FastAPI sobre tratamento de erros | `docs/adr/ADR-05-formato-tratamento-erros.md` |
 | 18 | https://fastapi.tiangolo.com/pt/tutorial/testing/ | Documentação em português do FastAPI sobre testes locais | `docs/adr/ADR-02-estrategia-testes.md` |
 | 19 | https://aws.amazon.com/pt/builders-library/timeouts-retries-and-backoff-with-jitter/ | Artigo em português sobre timeout, backoff exponencial e jitter | `docs/adr/ADR-04-retentativas-webhook.md` |
+| 20 | https://spec.openapis.org/oas/v3.1.0.html | Estrutura oficial do OpenAPI 3.1.0, campos nulos e uso de `oneOf` | `docs/openapi.yaml` |
+| 21 | https://yaml.org/spec/1.2.2/ | Regras de indentação, listas e mapeamentos na sintaxe YAML | `docs/openapi.yaml` |
+| 22 | https://swagger.io/docs/specification/v3_0/basic-structure/ | Organização de `paths`, `components` e reaproveitamento com `$ref` em YAML | `docs/openapi.yaml` |
+| 23 | https://editor.swagger.io/ | Validação visual e conferência de sintaxe do contrato OpenAPI | `docs/openapi.yaml` |
 
 *(Ex.: `https://docs.oracle.com/...` → sintaxe de `Optional` → `plan.md` na
 seção de decisões. Esse link é ILUSTRATIVO — fora de linha numerada não
