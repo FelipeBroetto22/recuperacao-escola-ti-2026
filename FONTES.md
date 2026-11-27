@@ -16,10 +16,19 @@
 
 | # | URL | O que foi consultado | Onde aparece no entregável |
 | --- | --- | --- | --- |
-| 1 | https://github.com/github/spec-kit | Estrutura de artefatos SDD (constitution, spec, plan e tasks) | `docs/tasks.md` e `docs/pesquisa.md` (P01) |
+| 1 | https://github.com/github/spec-kit | Estrutura de artefatos SDD (constitution, spec, plan e tasks) | `docs/tasks.md`, `docs/constitution.md` e `docs/pesquisa.md` (P01) |
 | 2 | https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html | Comparação de níveis de uso de especificação viva no projeto | `docs/pesquisa.md` (P01) |
 | 3 | https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow | Funcionamento de feature branches vs fluxos com develop | `docs/pesquisa.md` (P12) |
 | 4 | https://docs.github.com/en/get-started/using-github/github-flow | Uso de branches curtas e PRs direto na main | `docs/pesquisa.md` (P12) e fluxo de PRs |
+| 5 | https://www.rfc-editor.org/rfc/rfc9457 | Campos do formato `application/problem+json` para respostas de erro | `docs/constitution.md` e `docs/spec.md` |
+| 6 | https://www.rfc-editor.org/rfc/rfc9110 | Semântica dos códigos HTTP (201, 202, 204, 400, 404, 409, 422, 429, 503) | `docs/spec.md` |
+| 7 | https://viacep.com.br/ | Formato da URL de consulta de CEP e retorno `{"erro": true}` | `docs/spec.md` e `docs/plan.md` |
+| 8 | https://docs.python.org/3.12/library/decimal.html | Arredondamento `ROUND_HALF_UP` sem ponto flutuante para percentuais | `docs/constitution.md` e `docs/spec.md` |
+| 9 | https://docs.python.org/3.12/library/sqlite3.html | Conexão nativa com SQLite e queries parametrizadas com `?` | `docs/constitution.md` e `docs/plan.md` |
+| 10 | https://www.sqlite.org/lang_createtable.html | Regras de `UNIQUE`, `PRIMARY KEY` composta e `FOREIGN KEY` no SQLite | `docs/plan.md` |
+| 11 | https://www.sqlite.org/lang_transaction.html | Isolamento e transações no SQLite sob escritas concorrentes | `docs/plan.md` |
+| 12 | https://martinfowler.com/articles/practical-test-pyramid.html | Divisão entre testes de unidade, integração e servidores locais simulados | `docs/tests.md` |
+| 13 | https://docs.pytest.org/en/stable/how-to/tmp_path.html | Uso de diretórios temporários isolados por teste para o arquivo SQLite | `docs/tests.md` |
 
 *(Ex.: `https://docs.oracle.com/...` → sintaxe de `Optional` → `plan.md` na
 seção de decisões. Esse link é ILUSTRATIVO — fora de linha numerada não
@@ -41,7 +50,7 @@ conta. Se nenhum site foi consultado, escreva: **"Nenhum site consultado."**)*
 
 | # | Link público da conversa | Onde o conteúdo foi usado |
 | --- | --- | --- |
-| — | | |
+| 1 | https://share.gemini.google/U2Lwm3EOPL96 | Geração e explicação da sintaxe do diagrama ER em Mermaid das 5 tabelas | `docs/plan.md` |
 
 *(Se nenhuma IA foi utilizada, escreva: **"Nenhuma IA utilizada."**)*
 
