@@ -29,6 +29,12 @@
 | 11 | https://www.sqlite.org/lang_transaction.html | Isolamento e transações no SQLite sob escritas concorrentes | `docs/plan.md` |
 | 12 | https://martinfowler.com/articles/practical-test-pyramid.html | Divisão entre testes de unidade, integração e servidores locais simulados | `docs/tests.md` |
 | 13 | https://docs.pytest.org/en/stable/how-to/tmp_path.html | Uso de diretórios temporários isolados por teste para o arquivo SQLite | `docs/tests.md` |
+| 14 | https://docs.github.com/pt/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax | Guia em português de formatação Markdown no GitHub (tabelas e checklists) | Arquivos `.md` em `docs/`, issues e PRs |
+| 15 | https://adr.github.io/ | Formato e estrutura de Architecture Decision Records (ADRs) | `docs/adr/ADR-01` até `ADR-05` |
+| 16 | https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Reference/Status | Consulta em português dos códigos de status HTTP | `docs/spec.md` e `docs/adr/ADR-05-formato-tratamento-erros.md` |
+| 17 | https://fastapi.tiangolo.com/pt/tutorial/handling-errors/ | Documentação em português do FastAPI sobre tratamento de erros | `docs/adr/ADR-05-formato-tratamento-erros.md` |
+| 18 | https://fastapi.tiangolo.com/pt/tutorial/testing/ | Documentação em português do FastAPI sobre testes locais | `docs/adr/ADR-02-estrategia-testes.md` |
+| 19 | https://aws.amazon.com/pt/builders-library/timeouts-retries-and-backoff-with-jitter/ | Artigo em português sobre timeout, backoff exponencial e jitter | `docs/adr/ADR-04-retentativas-webhook.md` |
 
 *(Ex.: `https://docs.oracle.com/...` → sintaxe de `Optional` → `plan.md` na
 seção de decisões. Esse link é ILUSTRATIVO — fora de linha numerada não
